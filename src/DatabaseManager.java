@@ -96,8 +96,11 @@ public class DatabaseManager {
         public void addShowtime(String showtimeDate, String startTime) {
             // Check if the startTime already exists in the array
             for (int i = 0; i < currentIndex; i++) {
-                if ((showtimeDates[i] != null && showtimeDate.equals(showtimeDate)) && startTimes[i] != null && startTimes[i].equals(startTime)) {
+                if (startTimes[i] != null && startTimes[i].equals(startTime)) {
                     // If the start time already exists, don't add it again
+                    return;
+                }
+                if(showtimeDates[i] != null && showtimeDates[i].equals(showtimeDate)){
                     return;
                 }
             }

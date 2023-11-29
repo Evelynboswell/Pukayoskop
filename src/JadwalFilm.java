@@ -119,16 +119,16 @@ public class JadwalFilm extends JFrame {
         for (String day : days) {
             if(day != null) {
                 buttonHari = new JButton(day);
-                buttonHari.setBounds(x, 290, 85, 40);
+                buttonHari.setBounds(x, 290, 110, 40);
                 buttonHari.setBackground(Color.WHITE);
-                buttonHari.setFont(new Font("ARIAL BLACK", Font.PLAIN, 12));
+                buttonHari.setFont(new Font("ARIAL BLACK", Font.PLAIN, 14));
                 buttonHari.addActionListener((ActionEvent e) -> {
                     pilihHari = day;
                     clickedBeliButton();
                 });
                 buttonColorChange1(buttonHari);
                 contentPane.add(buttonHari);
-                x += 100;
+                x += 125;
             }
 
         }
@@ -139,7 +139,7 @@ public class JadwalFilm extends JFrame {
             if(j != null) {
                 buttonJam2D = new JButton(j);
                 buttonJam2D.setBounds(y, 410, 95, 30);
-                buttonJam2D.setFont(new Font("Arial", Font.BOLD, 12));
+                buttonJam2D.setFont(new Font("Arial", Font.BOLD, 14));
                 buttonJam2D.setBackground(Color.WHITE);
                 buttonJam2D.addActionListener((ActionEvent e) -> {
                     pilihJam = j;
