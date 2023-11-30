@@ -1,6 +1,8 @@
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class DatabaseManager {
@@ -8,6 +10,23 @@ public class DatabaseManager {
     private static final String DB_USER = "PBOL_balloonam";
     private static final String DB_PASSWORD = "d7c63c1262a8d826d469faf8f40a4ab6030fb4b3";
     private static String username;
+    private static SelectedMovieDetails selectedMovieDetails;
+    private static int selectedFilmId = -1;
+
+    public static String getUsername() {
+        return username;
+    }
+
+    public static void setUsername(String user) {
+        username = user;
+    }
+    public static int getSelectedFilmId() {
+        return selectedFilmId;
+    }
+
+    public static void setSelectedFilmId(int filmId) {
+        selectedFilmId = filmId;
+    }
     public static class MovieDetails {
         private String title;
         private String genre;
@@ -111,15 +130,6 @@ public class DatabaseManager {
             currentIndex++;
         }
 
-    }
-
-
-    public static String getUsername() {
-        return username;
-    }
-
-    public static void setUsername(String user) {
-        username = user;
     }
 
     public static boolean validateUser(String username, String password) {
@@ -246,20 +256,96 @@ public class DatabaseManager {
     }
     // This class fetches the selected day and  time from JadwalFilm class
     public static class SelectedMovieDetails {
-
         private String selectedDay;
         private String selectedTime;
-        private String selectedTier;
+        private int showtimeId;
 
-        public SelectedMovieDetails(String selectedDay, String selectedTime) {
+        public SelectedMovieDetails(String selectedDay, String selectedTime, int showtimeId) {
             this.selectedDay = selectedDay;
             this.selectedTime = selectedTime;
+            this.showtimeId = showtimeId;
         }
+
         public void displaySelectedDetails() {
             System.out.println("Selected Day: " + selectedDay);
             System.out.println("Selected Time: " + selectedTime);
+            System.out.println("Showtime ID: " + showtimeId);
+        }
+
+        public String getSelectedDay() {
+            return selectedDay;
+        }
+
+        public String getSelectedTime() {
+            return selectedTime;
+        }
+
+        public int getShowtimeId() {
+            return showtimeId;
         }
     }
+    public static void setSelectedMovieDetails(SelectedMovieDetails movieDetails) {
+        // Store the selected movie details for access by other classes
+        selectedMovieDetails = movieDetails;
+    }
+
+    public static SelectedMovieDetails getSelectedMovieDetails() {
+        return selectedMovieDetails;
+    }
+    public static int getShowtimeId(int filmId, String selectedDay, String selectedTime) {
+        int showtimeId = -1; // Default value if no ID is found
+        String query = "SELECT showtime_id, DAYNAME(showtime_date) AS day_name, TIME(start_time) AS start_time FROM Showtime WHERE film_id = ?";
+
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, filmId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    String dayName = resultSet.getString("day_name");
+                    String startTime = resultSet.getString("start_time");
+
+                    // Convert dayName and startTime to the desired format
+                    int formattedDay = convertDay(dayName);
+                    String formattedTime = convertTime(startTime);
+
+                    // Check if the retrieved day and time match the selected ones
+                    if (formattedDay == convertDay(selectedDay) && formattedTime.equals(selectedTime)) {
+                        showtimeId = resultSet.getInt("showtime_id");
+                        break; // Exit the loop if found
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle potential exceptions
+        }
+
+        return showtimeId;
+    }
+
+    private static int convertDay(String day) {
+        switch (day) {
+            case "Monday":
+                return 11;
+            case "Tuesday":
+                return 12;
+            case "Wednesday":
+                return 13;
+            case "Thursday":
+                return 14;
+            case "Friday":
+                return 15;
+            case "Saturday":
+                return 16;
+            default:
+                return -1; // Invalid day format
+        }
+    }
+
+    private static String convertTime(String time) {
+        return time.substring(0, 5); // Return only HH:MM part
+    }
+
     public static MovieShowtime getMovieShowtime(int filmId) {
         MovieShowtime movieShowtime = null;
 
@@ -299,5 +385,45 @@ public class DatabaseManager {
 
         return movieShowtime;
     }
+    public static void insertSeat(int filmId, int showtimeId, String seatName) {
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String query = "INSERT INTO Seats (film_id, showtime_id, seat_name) VALUES (?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, filmId);
+                statement.setInt(2, showtimeId);
+                statement.setString(3, seatName);
 
+                int rowsInserted = statement.executeUpdate();
+                if (rowsInserted > 0) {
+                    System.out.println("Seat inserted successfully: " + seatName);
+                } else {
+                    System.out.println("Failed to insert seat: " + seatName);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            // Handle SQL errors
+        }
+    }
+    public static List<String> getBookedSeats(int filmId, int showtimeId) {
+        List<String> bookedSeats = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String query = "SELECT seat_name FROM Seats WHERE film_id = ? AND showtime_id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, filmId);
+                statement.setInt(2, showtimeId);
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+                    String seatName = resultSet.getString("seat_name");
+                    bookedSeats.add(seatName);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle SQL errors
+        }
+        return bookedSeats;
+    }
 }

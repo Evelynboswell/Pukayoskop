@@ -166,6 +166,7 @@ public class Homepage extends JFrame {
 
                 buyTicketButton.addActionListener(e -> {
                     System.out.println("Selected Film ID: " + filmId);
+                    DatabaseManager.setSelectedFilmId(filmId);
                     this.dispose();
                     JadwalFilm jadwalFilm = new JadwalFilm(filmId);
                     jadwalFilm.setVisible(true);

@@ -119,7 +119,7 @@ public class JadwalFilm extends JFrame {
         for (String day : days) {
             if(day != null) {
                 buttonHari = new JButton(day);
-                buttonHari.setBounds(x, 290, 110, 40);
+                buttonHari.setBounds(x, 290, 120, 40);
                 buttonHari.setBackground(Color.WHITE);
                 buttonHari.setFont(new Font("ARIAL BLACK", Font.PLAIN, 14));
                 buttonHari.addActionListener((ActionEvent e) -> {
@@ -128,7 +128,7 @@ public class JadwalFilm extends JFrame {
                 });
                 buttonColorChange1(buttonHari);
                 contentPane.add(buttonHari);
-                x += 125;
+                x += 135;
             }
 
         }
@@ -160,21 +160,22 @@ public class JadwalFilm extends JFrame {
         buttonBeliTiket.setForeground(Color.decode("#FFBB32"));
         buttonBeliTiket.setEnabled(false);
         buttonBeliTiket.addActionListener((ActionEvent e) -> {
-            if (e.getSource() == buttonBeliTiket) {
+            if (e.getSource() == buttonBeliTiket && pilihHari != null && pilihJam != null) {
+                int currentFilmId = DatabaseManager.getSelectedFilmId(); // Retrieve the film_id
                 String selectedDay = pilihHari;
                 String selectedTime = pilihJam;
-                // Create an instance of SelectedMovieDetails and pass the selected values
-                DatabaseManager.SelectedMovieDetails movieInfo = new DatabaseManager.SelectedMovieDetails(selectedDay, selectedTime);
-
-                // Display or utilize the selected values using the new class
+                int showtimeId = DatabaseManager.getShowtimeId(currentFilmId, selectedDay, selectedTime);
+                DatabaseManager.SelectedMovieDetails movieInfo = new DatabaseManager.SelectedMovieDetails(selectedDay, selectedTime, showtimeId);
+                DatabaseManager.setSelectedMovieDetails(movieInfo);
                 movieInfo.displaySelectedDetails();
-
-                // Open the seat selection window or perform further actions
                 this.dispose();
                 Kursi kursi = new Kursi();
                 kursi.setVisible(true);
             }
         });
+
+
+
 
         // Back button
         ImageIcon backIcon = new ImageIcon("Icons\\backbutton.png");
@@ -315,7 +316,7 @@ public class JadwalFilm extends JFrame {
     }
 
     public static void main(String[] args) {
-        JadwalFilm jad = new JadwalFilm(3); //Test out
+        JadwalFilm jad = new JadwalFilm(4); //Test out
         jad.setVisible(true);
     }
 }

@@ -1,8 +1,8 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.*;
 
 public class Kursi extends JFrame implements ActionListener {
     private static final int FRAME_WIDTH = 1024;
@@ -14,44 +14,7 @@ public class Kursi extends JFrame implements ActionListener {
     private JButton oke, cancel,A1,A2,A3,A4,B1,B2,B3,B4,C1,C2,C3,C4,D1,D2,D3,D4,E1,E2,E3,E4, button1, button2, button3, layar;
     private JLabel tersedia, terpilih, terjual;
     private Color colorOri, colorPick, colorFg, colorSold, colorFgSold;
-    private static final String DB_URL = "jdbc:mariadb://qtr.h.filess.io:3305/PBOL_balloonam";
-    private static final String USER = "PBOL_balloonam";
-    private static final String PASSWORD = "d7c63c1262a8d826d469faf8f40a4ab6030fb4b3";
-    // Method to check booked seats in the database
-    private boolean isSeatBooked(int seatId) {
-        boolean isBooked = false;
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
-            String query = "SELECT booked_seat FROM Seats WHERE seat_id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, seatId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                int bookedSeat = resultSet.getInt("booked_seat");
-                isBooked = bookedSeat == 1; // If booked_seat is 1, seat is booked
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return isBooked;
-    }
-    // Method to set seat background color as booked if already booked in the database
-    private void setBookedSeats() {
-        for (JButton seatButton : getAllSeatButtons()) {
-            int seatId = getSeatIdFromButton(seatButton);
-            boolean isBooked = isSeatBooked(seatId);
-
-            if (isBooked) {
-                seatButton.setBackground(colorSold);
-                seatButton.setForeground(colorFgSold);
-                seatButton.setEnabled(false); // Optionally disable the booked seats
-            }
-        }
-    }
-    // Helper method to get all seat buttons in an array
-    private JButton[] getAllSeatButtons() {
-        return new JButton[]{A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, D1, D2, D3, D4, E1, E2, E3, E4};
-    }
-
+    private List<String> selectedSeats;
     public static void main(String[] args) {
         Kursi frame = new Kursi();
         frame.setVisible(true);
@@ -300,76 +263,51 @@ public class Kursi extends JFrame implements ActionListener {
         E2.addActionListener(this);
         E3.addActionListener(this);
         E4.addActionListener(this);
-        setBookedSeats();
-    }
 
+        selectedSeats = new ArrayList<>();
+        oke.addActionListener(this);
+        int filmId = DatabaseManager.getSelectedFilmId();
+        int showtimeId = DatabaseManager.getSelectedMovieDetails().getShowtimeId();
+        List<String> bookedSeats = DatabaseManager.getBookedSeats(filmId, showtimeId);
+        for (Component component : getContentPane().getComponents()) {
+            if (component instanceof JButton) {
+                JButton button = (JButton) component;
+                String buttonText = button.getText();
+                if (buttonText.matches("[A-E][1-4]") && bookedSeats.contains(buttonText)) {
+                    button.setEnabled(false);
+                    button.setBackground(Color.decode("#BBBECB"));
+                }
+            }
+        }
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton source = (JButton) e.getSource();
-        int seatId = getSeatIdFromButton(source);
 
-        // Check if the seat is already booked in the database
-        boolean isBooked = isSeatBooked(seatId);
+        if (source.getText().matches("[A-E][1-4]")) {
+            String seatName = source.getText();
 
-        if (!isBooked) {
             if (source.getBackground() == colorOri) {
                 source.setBackground(colorPick);
                 source.setForeground(colorFg);
+                selectedSeats.add(seatName);
             } else if (source.getBackground() == colorPick) {
                 source.setBackground(colorOri);
                 source.setForeground(colorFg);
+                selectedSeats.remove(seatName);
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "Seat already booked!");
         }
-    }
+        else if (source == oke) {
+            int filmId = DatabaseManager.getSelectedFilmId();
+            int showtimeId = DatabaseManager.getSelectedMovieDetails().getShowtimeId();
 
-    // Method to map button text to seat_id
-    private int getSeatIdFromButton(JButton button) {
-        String buttonText = button.getText();
-        switch (buttonText) {
-            case "A1":
-                return 1;
-            case "A2":
-                return 2;
-            case "A3":
-                return 3;
-            case "A4":
-                return 4;
-            case "B1":
-                return 5;
-            case "B2":
-                return 6;
-            case "B3":
-                return 7;
-            case "B4":
-                return 8;
-            case "C1":
-                return 9;
-            case "C2":
-                return 10;
-            case "C3":
-                return 11;
-            case "C4":
-                return 12;
-            case "D1":
-                return 13;
-            case "D2":
-                return 14;
-            case "D3":
-                return 15;
-            case "D4":
-                return 16;
-            case "E1":
-                return 17;
-            case "E2":
-                return 18;
-            case "E3":
-                return 19;
-            case "E4":
-                return 20;
-            default:
-                return -1; // Invalid seat
+            for (String seat : selectedSeats) {
+                DatabaseManager.insertSeat(filmId, showtimeId, seat);
+            }
+//            selectedSeats.clear();
+            Payment payment = new Payment();
+            this.dispose();
+            payment.setVisible(true);
         }
     }
 }
