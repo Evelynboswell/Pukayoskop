@@ -30,6 +30,34 @@ public class Kursi extends JFrame implements ActionListener {
         setTitle("Pilih Kursi");
         setLocation(FRAME_X_ORIGIN, FRAME_Y_ORIGIN);
 
+        ImageIcon backIcon = new ImageIcon("Icons\\backbutton.png");
+        ImageIcon backIconHover = new ImageIcon("Icons\\backbuttonhover.png");
+        Image scaledBackIcon = backIcon.getImage().getScaledInstance(25,25, Image.SCALE_SMOOTH);
+        Image scaledBackIconHover = backIconHover.getImage().getScaledInstance(25,25, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledBackIcon);
+        ImageIcon scaledIconHover = new ImageIcon(scaledBackIconHover);
+        JLabel backButton = new JLabel(scaledIcon);
+        backButton.setBounds(20, 10, 25,25);
+        backButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        contentPane.add(backButton);
+        backButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                dispose();
+                Homepage hp = new Homepage();
+                hp.setVisible(true);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                backButton.setIcon(scaledIconHover);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                backButton.setIcon(scaledIcon);
+            }
+        });
         //Ini variable untuk nyimpan warna
         colorOri = Color.decode("#131557");
         colorPick = Color.decode("#2655FF");
@@ -56,8 +84,6 @@ public class Kursi extends JFrame implements ActionListener {
         terjual.setForeground(colorFgSold);
         contentPane.add(terjual);
 
-        //Button kotak yg nggak dipakai
-        //Cuman sebagai indikator warna kursi yg tersedia, terpilih, terjual
         button1 = new JButton();
         button1.setBounds(370, 10, 25, 25);
         button1.setBackground(colorOri);
@@ -300,11 +326,9 @@ public class Kursi extends JFrame implements ActionListener {
         else if (source == oke) {
             int filmId = DatabaseManager.getSelectedFilmId();
             int showtimeId = DatabaseManager.getSelectedMovieDetails().getShowtimeId();
-
             for (String seat : selectedSeats) {
                 DatabaseManager.insertSeat(filmId, showtimeId, seat);
             }
-//            selectedSeats.clear();
             Payment payment = new Payment();
             this.dispose();
             payment.setVisible(true);

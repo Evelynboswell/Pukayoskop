@@ -59,8 +59,8 @@ public class Homepage extends JFrame {
         ticketImageLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Bookings test = new Bookings();
                 dispose();
+                Bookings test = new Bookings();
                 test.setVisible(true);
             }
 
@@ -79,8 +79,8 @@ public class Homepage extends JFrame {
         ticketLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Bookings test = new Bookings();
                 dispose();
+                Bookings test = new Bookings();
                 test.setVisible(true);
             }
 
@@ -132,6 +132,9 @@ public class Homepage extends JFrame {
         add(sidebarPanel, BorderLayout.WEST);
         add(movieScrollPane, BorderLayout.CENTER);
 
+        String username = DatabaseManager.getUsername();
+        int userId = DatabaseManager.getUserId(username);
+        System.out.println("User ID: "+userId);
         setVisible(true);
     }
     private void loadMoviesFromDatabase(JPanel moviePanel) {
