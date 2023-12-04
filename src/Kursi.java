@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 
@@ -15,6 +16,7 @@ public class Kursi extends JFrame implements ActionListener {
     private JLabel tersedia, terpilih, terjual;
     private Color colorOri, colorPick, colorFg, colorSold, colorFgSold;
     private List<String> selectedSeats;
+    private int selectedSeatCounter;
     public static void main(String[] args) {
         Kursi frame = new Kursi();
         frame.setVisible(true);
@@ -294,6 +296,7 @@ public class Kursi extends JFrame implements ActionListener {
         oke.addActionListener(this);
         int filmId = DatabaseManager.getSelectedFilmId();
         int showtimeId = DatabaseManager.getSelectedMovieDetails().getShowtimeId();
+        int n = selectedSeatCounter;
         List<String> bookedSeats = DatabaseManager.getBookedSeats(filmId, showtimeId);
         for (Component component : getContentPane().getComponents()) {
             if (component instanceof JButton) {
@@ -305,6 +308,7 @@ public class Kursi extends JFrame implements ActionListener {
                 }
             }
         }
+        selectedSeatCounter = 0;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -317,19 +321,30 @@ public class Kursi extends JFrame implements ActionListener {
                 source.setBackground(colorPick);
                 source.setForeground(colorFg);
                 selectedSeats.add(seatName);
+                selectedSeatCounter++;
             } else if (source.getBackground() == colorPick) {
                 source.setBackground(colorOri);
                 source.setForeground(colorFg);
                 selectedSeats.remove(seatName);
+                selectedSeatCounter--;
             }
+            System.out.println("Selected seats: " + selectedSeatCounter);
         }
         else if (source == oke) {
             int filmId = DatabaseManager.getSelectedFilmId();
             int showtimeId = DatabaseManager.getSelectedMovieDetails().getShowtimeId();
             for (String seat : selectedSeats) {
-                DatabaseManager.insertSeat(filmId, showtimeId, seat);
+                Component[] components = getContentPane().getComponents();
+                for (Component component : components) {
+                    if (component instanceof JButton) {
+                        JButton button = (JButton) component;
+                        if (button.getText().equals(seat) && !button.getBackground().equals(Color.decode("#BBBECB"))) {
+                            DatabaseManager.insertSeat(filmId, showtimeId, seat);
+                        }
+                    }
+                }
             }
-            Payment payment = new Payment();
+            Payment payment = new Payment(selectedSeatCounter);
             this.dispose();
             payment.setVisible(true);
         }

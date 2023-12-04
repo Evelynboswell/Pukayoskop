@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 public class Payment extends JFrame{
     private JButton blueBox, bayar;
@@ -13,8 +14,10 @@ public class Payment extends JFrame{
     private JLabel totalKursi, totalKursiNum, totalHarga, totalHargaText;
     private JLabel biayaAdmin, biayaAdminText, totalBayar, biayaFix;
     private ImageIcon poster;
-
-    public Payment() {
+    private List<String> selectedSeats;
+    private int selectedSeatCounter;
+    public Payment(int selectedSeatCounter) {
+        this.selectedSeatCounter = selectedSeatCounter;
         setTitle("Pembayaran Tiket Bioskop");
         setSize(1024, 768);
         setLocation(220, 20);
@@ -27,7 +30,6 @@ public class Payment extends JFrame{
 
         int filmId = DatabaseManager.getSelectedFilmId();
         DatabaseManager.MovieDetails movieDetails = DatabaseManager.getMovieDetails(filmId);
-
 
         blueBox = new JButton();
         blueBox.setBounds(0, 0, 1024, 300);
@@ -54,7 +56,7 @@ public class Payment extends JFrame{
         judulText = new JLabel(filmTitle);
         judulText.setFont(new Font("Arial", Font.BOLD, 18));
         judulText.setForeground(Color.WHITE);
-        judulText.setBounds(250, 110, 150, 20);
+        judulText.setBounds(250, 110, 300, 20);
 
         bioskop = new JLabel("BIOSKOP");
         bioskop.setFont(new Font("Arial", Font.BOLD, 16));
@@ -93,7 +95,10 @@ public class Payment extends JFrame{
         kursi.setForeground(Color.decode("#A0A0A0"));
         kursi.setBounds(50, 400, 150, 20);
 
-        List<String> selectedSeats = DatabaseManager.getSelectedSeats(filmId,showtimeId);
+        System.out.println("Seat counter: "+selectedSeatCounter);
+        System.out.println("film id: "+filmId);
+        System.out.println("showtime id: "+showtimeId);
+        List<String> selectedSeats = DatabaseManager.getSelectedSeats(filmId,showtimeId,selectedSeatCounter);
         System.out.println(selectedSeats);
         String seatsString = String.join(", ", selectedSeats);
         kursiText = new JLabel(seatsString);
@@ -156,7 +161,7 @@ public class Payment extends JFrame{
                     int userId = DatabaseManager.getUserId(user);
                     DatabaseManager.insertTicket(userId, filmId, showtimeId, selectedSeats, totalPrice);
                 } else if (confirm == JOptionPane.NO_OPTION) {
-                    DatabaseManager.deleteSeats(filmId, showtimeId, selectedSeats);
+                    DatabaseManager.deleteSeats(filmId, showtimeId, selectedSeatCounter);
                 }
                 dispose();
                 Homepage homepage = new Homepage();

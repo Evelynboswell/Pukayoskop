@@ -32,33 +32,6 @@ public class DatabaseManager {
     public static void addSelectedSeat(String seatName) {
         selectedSeats.add(seatName);
     }
-
-    public static List<String> getSelectedSeats(int filmId, int showtimeId) {
-        List<String> selectedSeats = new ArrayList<>();
-
-        try {
-            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            String query = "SELECT seat_name FROM Seats WHERE film_id = ? AND showtime_id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, filmId);
-            statement.setInt(2, showtimeId);
-
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                String seatName = resultSet.getString("seat_name");
-                selectedSeats.add(seatName);
-            }
-
-            resultSet.close();
-            statement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle SQL errors
-        }
-
-        return selectedSeats;
-    }
     public static double getServiceFee() {
         return SERVICE_FEE;
     }
@@ -468,6 +441,33 @@ public class DatabaseManager {
         }
         return bookedSeats;
     }
+    public static List<String> getSelectedSeats(int filmId, int showtimeId, int selectedSeatsCounter) {
+        List<String> selectedSeats = new ArrayList<>();
+
+        try {
+            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            String query = "SELECT seat_name FROM Seats WHERE film_id = ? AND showtime_id = ? ORDER BY seat_id DESC LIMIT ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, filmId);
+            statement.setInt(2, showtimeId);
+            statement.setInt(3, selectedSeatsCounter);
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String seatName = resultSet.getString("seat_name");
+                selectedSeats.add(seatName);
+            }
+
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle SQL errors
+        }
+
+        return selectedSeats;
+    }
     public static double getTotalSeatPrice(int filmId, int showtimeId, List<String> selectedSeats) {
         double totalSeatPrice = 0.0;
 
@@ -567,27 +567,34 @@ public class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle SQL errors
+            System.err.println("Error executing SQL query: " + e.getMessage());
         }
 
         return seatId;
     }
-    public static void deleteSeats(int filmId, int showtimeId, List<String> selectedSeats) {
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            for (String seatName : selectedSeats) {
-                String query = "DELETE FROM Seats WHERE film_id = ? AND showtime_id = ? AND seat_name = ?";
-                PreparedStatement statement = connection.prepareStatement(query);
-                statement.setInt(1, filmId);
-                statement.setInt(2, showtimeId);
-                statement.setString(3, seatName);
+    public static void deleteSeats(int filmId, int showtimeId, int selectedSeatsCounter) {
+        if (filmId <= 0 || showtimeId <= 0 || selectedSeatsCounter <= 0) {
+            throw new IllegalArgumentException("Invalid input parameters");
+        }
 
-                statement.executeUpdate();
-                statement.close();
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String query = "DELETE FROM Seats WHERE film_id = ? AND showtime_id = ? ORDER BY seat_id DESC LIMIT ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, filmId);
+            statement.setInt(2, showtimeId);
+            statement.setInt(3, selectedSeatsCounter);
+
+            int rowsDeleted = statement.executeUpdate();
+            if (rowsDeleted == 0) {
+                System.out.println("No seats were deleted.");
             }
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
+            System.err.println("Failed to delete seats. Please try again later.");
         }
     }
+
     public static int getUserId(String username) {
         int userId = -1; // Default value if no matching user_id is found
 
@@ -600,12 +607,10 @@ public class DatabaseManager {
             if (resultSet.next()) {
                 userId = resultSet.getInt("user_id");
             }
-
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle SQL errors
+            System.out.println("Error retrieving user ID from the database.");
         }
 
         return userId;

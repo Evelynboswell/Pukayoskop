@@ -10,8 +10,9 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.List;
 
 public class Bookings extends JFrame {
     private LoadingPane loadingPane;
@@ -147,6 +148,7 @@ public class Bookings extends JFrame {
         getTicketDetails(ticketPanel);
     }
     public void getTicketDetails(JPanel ticketPanel) {
+        List<Integer> usedTicketIds = new ArrayList<>();
         try {
             ResultSet resultSet = DatabaseManager.getTicketsDetails(id);
 
@@ -158,9 +160,14 @@ public class Bookings extends JFrame {
                     continue;
                 }
 
+                int ticketId = resultSet.getInt("ticket_id");
+                if (usedTicketIds.contains(ticketId)) {
+                    continue;
+                }
+                usedTicketIds.add(ticketId);
+                System.out.println(usedTicketIds);
                 hasTickets = true;
 
-                int ticketId = resultSet.getInt("ticket_id");
                 String movieTitle = resultSet.getString("title");
                 String showDate = resultSet.getString("showtime_date");
                 String formattedDate = convertDateFormat(showDate);
