@@ -25,7 +25,7 @@ public class SignIn extends JFrame {
         setTitle("Sign In Page");
 
         loadingPane = new LoadingPane();
-        loadingPane.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Dispose on close to prevent memory leaks
+        loadingPane.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  
         loadingPane.setVisible(false); // Initially hidden
 
         // Colors
@@ -130,11 +130,11 @@ public class SignIn extends JFrame {
             }
         });
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        // Set default border for text fields
+        // Memberikan border pada Text Field
         namaTF.setBorder(defaultBorder);
         passTF.setBorder(defaultBorder);
 
-        // Change border color when mouse hovers over text fields
+        // Mengganti warna border ketika pointer mouse di atas text field
         namaTF.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -163,7 +163,7 @@ public class SignIn extends JFrame {
             }
         });
 
-        // Change border color when text fields are focused or lose focus
+        // Mengganti warna border ketika text field sedang difokuskan atau tidak 
         namaTF.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
