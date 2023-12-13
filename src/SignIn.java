@@ -26,7 +26,7 @@ public class SignIn extends JFrame {
 
         loadingPane = new LoadingPane();
         loadingPane.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  
-        loadingPane.setVisible(false); // Initially hidden
+        loadingPane.setVisible(false); 
 
         // Colors
         colorBg = Color.decode("#1F237F");
