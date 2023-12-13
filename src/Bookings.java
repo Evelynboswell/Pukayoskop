@@ -37,20 +37,20 @@ public class Bookings extends JFrame {
         JLabel profileLabel = new JLabel("Profile");
         profileLabel.setForeground(Color.decode("#ffffff"));
         profileLabel.setFont(new Font("Verdana", Font.BOLD, 18));
-        profileLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the label
+        profileLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Posisi Tengah 
         sidebarPanel.add(profileLabel);
 
         ImageIcon profileImageIcon = new ImageIcon("Icons\\profile.png");
         Image profileImage = profileImageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT);
         ImageIcon scaledProfileImageIcon = new ImageIcon(profileImage);
         JLabel profileImageLabel = new JLabel(scaledProfileImageIcon);
-        profileImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the image
+        profileImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Posisi Tengah 
         sidebarPanel.add(profileImageLabel);
 
         JLabel usernameLabel = new JLabel(DatabaseManager.getUsername());
         usernameLabel.setForeground(Color.decode("#ffffff"));
         usernameLabel.setFont(new Font("Verdana", Font.BOLD, 18));
-        usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the label
+        usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Posisi tengah 
         sidebarPanel.add(usernameLabel);
 
         String originalImagePath = "Icons\\home.png";
@@ -59,14 +59,14 @@ public class Bookings extends JFrame {
         ImageIcon originalTicketIcon = new ImageIcon(new ImageIcon(originalImagePath).getImage().getScaledInstance(80, 80, Image.SCALE_DEFAULT));
         ImageIcon alternateTicketIcon = new ImageIcon(new ImageIcon(alternateImagePath).getImage().getScaledInstance(80, 80, Image.SCALE_DEFAULT));
         JLabel ticketImageLabel = new JLabel(originalTicketIcon);
-        ticketImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the image
+        ticketImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Posisi tengah 
         sidebarPanel.add(Box.createVerticalStrut(40));
         sidebarPanel.add(ticketImageLabel);
 
         JLabel ticketLabel = new JLabel("Home");
         ticketLabel.setForeground(Color.decode("#ffffff"));
         ticketLabel.setFont(new Font("Verdana", Font.BOLD, 14));
-        ticketLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the label
+        ticketLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Posisi tengah 
 
         ticketImageLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -78,14 +78,14 @@ public class Bookings extends JFrame {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                ticketImageLabel.setIcon(alternateTicketIcon); // Change image to alternate on hover
-                ticketImageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Change cursor to hand when hovered
+                ticketImageLabel.setIcon(alternateTicketIcon); // Ganti gambar ketika kursor mouse di atas label
+                ticketImageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Ganti tipe kursor menjadi 'hand cursor'
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                ticketImageLabel.setIcon(originalTicketIcon); // Revert to original image on exit
-                ticketImageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // Change cursor back to default
+                ticketImageLabel.setIcon(originalTicketIcon); // Kembali ke gambar original ketika kursor mouse tidak di label 
+                ticketImageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); // Ganti tipe kursor menjadi default
             }
         });
         ticketLabel.addMouseListener(new MouseAdapter() {
@@ -112,7 +112,7 @@ public class Bookings extends JFrame {
         sidebarPanel.add(Box.createVerticalStrut(10));
         sidebarPanel.add(ticketLabel);
 
-        // Red Log Out Button
+        // Log Out Button
         JButton logoutButton = new JButton("Log Out");
         logoutButton.setFont(new Font("Verdana", Font.BOLD, 18));
         logoutButton.setBackground(Color.RED);
@@ -127,7 +127,6 @@ public class Bookings extends JFrame {
         sidebarPanel.add(Box.createVerticalStrut(50));
         sidebarPanel.add(logoutButton);
         add(sidebarPanel, BorderLayout.WEST);
-
 
         JPanel ticketPanel = new JPanel();
         ticketPanel.setLayout(new BoxLayout(ticketPanel, BoxLayout.Y_AXIS));
@@ -147,6 +146,8 @@ public class Bookings extends JFrame {
         add(ticketScrollPane, BorderLayout.CENTER);
         getTicketDetails(ticketPanel);
     }
+    
+    // Method untuk mengembalikan informasi terkait tiket 
     public void getTicketDetails(JPanel ticketPanel) {
         List<Integer> usedTicketIds = new ArrayList<>();
         try {
@@ -241,7 +242,7 @@ public class Bookings extends JFrame {
                                 printticketIdLabel.getText()
                         };
 
-                        // Write the ticket details to a file
+                        // Menuliskan detail tiket ke sebuah txt file
                         PrintTicket.writeTicketEntry("ticket_" + ticketId + ".txt", ticketComponents, ticketComponents2);
                     }
                 });
@@ -256,14 +257,10 @@ public class Bookings extends JFrame {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQLException
         }
     }
 
-    public static void main(String[] args) {
-        Bookings bookings = new Bookings();
-        bookings.setVisible(true);
-    }
+    // Method untuk mengubah format tanggal 
     public String convertDateFormat(String inputDateStr) {
         String outputDateStr = "";
         try {
@@ -274,8 +271,13 @@ public class Bookings extends JFrame {
             outputDateStr = outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
-            // Handle parsing exception if needed
         }
         return outputDateStr;
+    }
+    
+    // Main 
+    public static void main(String[] args) {
+        Bookings bookings = new Bookings();
+        bookings.setVisible(true);
     }
 }
