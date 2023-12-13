@@ -25,7 +25,7 @@ public class JadwalFilm extends JFrame {
         posterFilm = new ImageIcon();
         poster = new JLabel();
 
-        // Fetch movie details using SelectedMovie class
+        // Mengambil informasi terkait film yang dipilih lewat kelas DatabaseManager
         DatabaseManager.MovieDetails movieDetails = DatabaseManager.getMovieDetails(selectedFilmId);
         DatabaseManager.MovieShowtime movieShowtime = DatabaseManager.getMovieShowtime(selectedFilmId);
         // Frame
@@ -101,13 +101,13 @@ public class JadwalFilm extends JFrame {
         descriptionArea.setFont(new Font("Serif", Font.PLAIN, 17));
         descriptionArea.setEditable(false);
 
-        // Update GUI components with fetched movie details
+        // Update komponen GUI dengan data yang telah diambil 
         judulFilm.setText(movieDetails.getTitle());
         textGenre.setText(movieDetails.getGenre());
         textDurasi.setText(movieDetails.getDuration());
         textRating.setText(movieDetails.getRating());
 
-        // Insert line breaks in the description text
+        // Mengubah format dari teks deskripsi film 
         String originalDescription = movieDetails.getDescription();
         String formattedDescription = formatDescription(originalDescription);
         descriptionArea.setText(formattedDescription);
@@ -173,10 +173,7 @@ public class JadwalFilm extends JFrame {
             }
         });
 
-
-
-
-        // Back button
+        // Back 'button'
         ImageIcon backIcon = new ImageIcon("Icons\\backbutton.png");
         ImageIcon backIconHover = new ImageIcon("Icons\\backbuttonhover.png");
 
@@ -197,8 +194,7 @@ public class JadwalFilm extends JFrame {
         backButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Create an instance of SignIn when back button is clicked
-                dispose(); // Close the current sign-up window
+                dispose(); 
                 Homepage hp = new Homepage();
                 hp.setVisible(true);
             }
@@ -214,24 +210,23 @@ public class JadwalFilm extends JFrame {
             }
         });
 
-        // Load and set poster image using a separate thread
+        // Mengupload gambar poster menggunakan thread terpisah
         new Thread(() -> {
             try {
                 URL url = new URL(movieDetails.getImageUrl());
                 Image image = ImageIO.read(url);
                 posterFilm.setImage(image.getScaledInstance(250, 310, Image.SCALE_SMOOTH));
-
-                // Update the poster image on the EDT (Event Dispatch Thread)
+                
+                // Mengupdate gambar poster 
                 SwingUtilities.invokeLater(() -> {
                     poster.setIcon(posterFilm);
                     poster.setBounds(20, 50, 270, 330);
                 });
             } catch (IOException e) {
                 e.printStackTrace();
-                // Handle image loading error (display default image or skip entry)
             }
         }).start();
-
+        // Menambahkan semua komponen ke dalam container
         contentPane.add(judulFilm);
         contentPane.add(genre);
         contentPane.add(durasi);
@@ -280,7 +275,7 @@ public class JadwalFilm extends JFrame {
             clickedButton.setBackground(Color.decode("#1F237F"));
             clickedButton.setForeground(Color.WHITE);
             prev2 = clickedButton;
-            clickedBeliButton(); // Check if both day and time are selected
+            clickedBeliButton(); // Cek apakah button hari dan jam telah diklik semua
         });
     }
 
@@ -293,7 +288,7 @@ public class JadwalFilm extends JFrame {
         }
     }
 
-    // Method to insert line breaks in the description text
+    // Method untuk menambahkan line break pada teks
     private String formatDescription(String originalDescription) {
         int maxCharactersPerLine = 40; // Adjust this based on your preference
 
@@ -315,7 +310,7 @@ public class JadwalFilm extends JFrame {
     }
 
     public static void main(String[] args) {
-        JadwalFilm jad = new JadwalFilm(4); //Test out
+        JadwalFilm jad = new JadwalFilm(4); 
         jad.setVisible(true);
     }
 }
