@@ -85,9 +85,9 @@ public class SignIn extends JFrame {
         signUpLink.setForeground(Color.BLUE);
         signUpLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
         signUpLink.setBounds(285, 300, 200, 20);
+        
         contentPane.add(signUpLink);
         contentPane.add(signUpText);
-
         contentPane.add(signUpLabel);
         contentPane.add(namaLabel);
         contentPane.add(namaTF);
