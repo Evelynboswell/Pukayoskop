@@ -3,23 +3,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LoadingPane extends JFrame {
-
     private JLabel loadingLabel;
     private Timer timer;
     private int dotCount = 0;
 
     public LoadingPane() {
         setSize(300, 100);
-        setLocationRelativeTo(null); // Center the frame on the screen
+        setLocationRelativeTo(null); // Memposisikan frame pada tengah layar
         setResizable(false);
         setTitle("Loading...");
 
         loadingLabel = new JLabel("Loading, please wait");
         loadingLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
         getContentPane().add(loadingLabel);
 
-        // Create a timer to update the loading label text with animation
+        // Membuat timer 
         timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -28,7 +26,7 @@ public class LoadingPane extends JFrame {
         });
         timer.start();
 
-        // Stop the timer when the window is closed
+        // Timer berhenti ketika window ditutup
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
