@@ -23,7 +23,6 @@ public class PrintTicket {
             writer.write("______________________________________________________---____________________________________]\n");
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle IOException if needed
         }
     }
 
