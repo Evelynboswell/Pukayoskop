@@ -169,7 +169,6 @@ public class SignIn extends JFrame {
             public void focusGained(FocusEvent e) {
                 namaTF.setBorder(activeBorder);
             }
-
             @Override
             public void focusLost(FocusEvent e) {
                 if (namaTF.getText().isEmpty()) {
@@ -177,7 +176,6 @@ public class SignIn extends JFrame {
                 }
             }
         });
-
         passTF.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
