@@ -111,9 +111,8 @@ public class JadwalFilm extends JFrame {
         String originalDescription = movieDetails.getDescription();
         String formattedDescription = formatDescription(originalDescription);
         descriptionArea.setText(formattedDescription);
+        
         // Button Hari
-
-
         String[] days = movieShowtime.getShowtimeDates();
         int x = 300;
         for (String day : days) {
