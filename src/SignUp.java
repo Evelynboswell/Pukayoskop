@@ -60,12 +60,10 @@ public class SignUp extends JFrame {
                 SignIn signIn = new SignIn();
                 signIn.setVisible(true);
             }
-
             @Override
             public void mouseEntered(MouseEvent e) {
                 backButton.setIcon(scaledIconHover);
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 backButton.setIcon(scaledIcon);
