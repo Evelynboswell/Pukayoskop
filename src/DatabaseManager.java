@@ -25,7 +25,6 @@ public class DatabaseManager {
     public static int getSelectedFilmId() {
         return selectedFilmId;
     }
-
     public static void setSelectedFilmId(int filmId) {
         selectedFilmId = filmId;
     }
@@ -39,6 +38,7 @@ public class DatabaseManager {
         selectedSeats.clear();
     }
 
+    // Kelas ini mengambil informasi terkait film dari database
     public static class MovieDetails {
         private String title;
         private String genre;
@@ -46,51 +46,40 @@ public class DatabaseManager {
         private String rating;
         private String description;
         private String imageUrl;
-
+        // Setter dan Getter 
         public String getTitle() {
             return title;
         }
-
         public void setTitle(String title) {
             this.title = title;
         }
-
         public String getGenre() {
             return genre;
         }
-
         public void setGenre(String genre) {
             this.genre = genre;
         }
-
         public String getDuration() {
             return duration;
         }
-
         public void setDuration(String duration) {
             this.duration = duration;
         }
-
         public String getRating() {
             return rating;
         }
-
         public void setRating(String rating) {
             this.rating = rating;
         }
-
         public String getDescription() {
             return description;
         }
-
         public void setDescription(String description) {
             this.description = description;
         }
-
         public String getImageUrl() {
             return imageUrl;
         }
-
         public void setImageUrl(String imageUrl) {
             this.imageUrl = imageUrl;
         }
@@ -105,30 +94,31 @@ public class DatabaseManager {
             this.imageUrl = imageUrl;
         }
     }
+
+    // Kelas ini mengambil jadwal penayangan film dari database 
     public static class MovieShowtime {
         private String[] showtimeDates;
         private String[] startTimes;
         private int currentIndex;
-
+        // Constructor
         public MovieShowtime(int size) {
             this.showtimeDates = new String[size];
             this.startTimes = new String[size];
             this.currentIndex = 0;
         }
-
+        // Setter dan Getter
         public String[] getShowtimeDates() {
             return showtimeDates;
         }
-
         public String[] getStartTimes() {
             return startTimes;
         }
-
+        // Method untuk menambahkan hari dan jam ke array
         public void addShowtime(String showtimeDate, String startTime) {
-            // Check if the startTime already exists in the array
+            // Cek apakah jam tayang sudah ada di dalam array
             for (int i = 0; i < currentIndex; i++) {
                 if (startTimes[i] != null && startTimes[i].equals(startTime)) {
-                    // If the start time already exists, don't add it again
+                    // jika jam tayang sudah ada maka tidak dimasukkan lagi
                     return;
                 }
                 if(showtimeDates[i] != null && showtimeDates[i].equals(showtimeDate)){
@@ -136,14 +126,13 @@ public class DatabaseManager {
                 }
             }
 
-            // Add the showtime if it's unique
+            // menambahkan data jika nilainya unik/berbeda dari yg lain
             showtimeDates[currentIndex] = showtimeDate;
             startTimes[currentIndex] = startTime;
             currentIndex++;
         }
-
     }
-
+    // Method untuk mengotentifikasi user
     public static boolean validateUser(String username, String password) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -159,12 +148,12 @@ public class DatabaseManager {
 
             if (resultSet.next()) {
                 setUsername(username);
-                return true; // User is validated
+                return true; // Valid 
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            // Close the ResultSet, PreparedStatement, and Connection in reverse order
+            // Menutup ResultSet, PreparedStatement, dan Connection dalam urutan terbalik
             if (resultSet != null) {
                 try {
                     resultSet.close();
@@ -187,9 +176,9 @@ public class DatabaseManager {
                 }
             }
         }
-        return false; // Validation failed
+        return false; // Validasi gagal
     }
-
+    // Method untuk memasukkan data user ke database
     public static boolean insertUser(String fullname, String username, String password, String userphone) {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             String checkQuery = "SELECT username FROM Users WHERE username = ?";
@@ -198,7 +187,7 @@ public class DatabaseManager {
             ResultSet resultSet = checkStatement.executeQuery();
 
             if (resultSet.next()) {
-                // Username already exists, return false
+                // Username sudah ada di database, kembalikan nilai false
                 return false;
             } else {
                 String insertQuery = "INSERT INTO Users (fullname, username, password, user_phone) VALUES (?, ?, ?, ?)";
@@ -216,6 +205,7 @@ public class DatabaseManager {
             return false;
         }
     }
+    // Method untuk mengambil film dari database
     public static ResultSet getMovies() throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -239,6 +229,7 @@ public class DatabaseManager {
         }
         return resultSet;
     }
+    // Method untuk mengambil informasi dari film yang dipilih
     public static MovieDetails getMovieDetails(int filmId) {
         MovieDetails movieDetails = null;
 
@@ -261,37 +252,34 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
         }
-
         return movieDetails;
     }
-    // This class fetches the selected day and  time from JadwalFilm class
+    
+    // Kelas ini mengambil jadwal film yang telah dipilih user dari kelas JadwalFilm
     public static class SelectedMovieDetails {
         private String selectedDay;
         private String selectedTime;
         private int showtimeId;
-
+        // Constructor
         public SelectedMovieDetails(String selectedDay, String selectedTime, int showtimeId) {
             this.selectedDay = selectedDay;
             this.selectedTime = selectedTime;
             this.showtimeId = showtimeId;
         }
-
+        // Method untuk menampilkan jadwal film yang dipilih
         public void displaySelectedDetails() {
             System.out.println("Selected Day: " + selectedDay);
             System.out.println("Selected Time: " + selectedTime);
             System.out.println("Showtime ID: " + showtimeId);
         }
-
+        // Setter dan Getter
         public String getSelectedDay() {
             return selectedDay;
         }
-
         public String getSelectedTime() {
             return selectedTime;
         }
-
         public int getShowtimeId() {
             return showtimeId;
         }
@@ -300,12 +288,13 @@ public class DatabaseManager {
         // Store the selected movie details for access by other classes
         selectedMovieDetails = movieDetails;
     }
-
     public static SelectedMovieDetails getSelectedMovieDetails() {
         return selectedMovieDetails;
     }
+
+    // Method untuk mengambil showtime_id dari sebuah film dari database
     public static int getShowtimeId(int filmId, String selectedDay, String selectedTime) {
-        int showtimeId = -1; // Default value if no ID is found
+        int showtimeId = -1; // Nilai default jika id tidak ditemukan
         String query = "SELECT showtime_id, DAYNAME(showtime_date) AS day_name, TIME(start_time) AS start_time FROM Showtime WHERE film_id = ?";
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -317,11 +306,11 @@ public class DatabaseManager {
                     String dayName = resultSet.getString("day_name");
                     String startTime = resultSet.getString("start_time");
 
-                    // Convert dayName and startTime to the desired format
+                    // Konversi format hari dan jam 
                     int formattedDay = convertDay(dayName);
                     String formattedTime = convertTime(startTime);
 
-                    // Check if the retrieved day and time match the selected ones
+                    // Cek apakah hari dan jam yang diambil cocok dengan yg dipilih
                     if (formattedDay == convertDay(selectedDay) && formattedTime.equals(selectedTime)) {
                         showtimeId = resultSet.getInt("showtime_id");
                         break; // Exit the loop if found
@@ -329,7 +318,7 @@ public class DatabaseManager {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Handle potential exceptions
+            e.printStackTrace(); 
         }
 
         return showtimeId;
@@ -350,14 +339,14 @@ public class DatabaseManager {
             case "Saturday":
                 return 16;
             default:
-                return -1; // Invalid day format
+                return -1;
         }
     }
 
     private static String convertTime(String time) {
-        return time.substring(0, 5); // Return only HH:MM part
+        return time.substring(0, 5); // Mengembalikan dalam bentuk HH:MM
     }
-
+    // Method untuk mengambil jam tayang film 
     public static MovieShowtime getMovieShowtime(int filmId) {
         MovieShowtime movieShowtime = null;
 
@@ -381,7 +370,7 @@ public class DatabaseManager {
                     String showtimeDate = resultSet.getString("showtime_date");
                     String startTime = resultSet.getString("start_time");
 
-                    // Trimming the time to HH:mm format
+                    // Mengubah format jam menjadi HH:MM
                     String trimmedTime = startTime.substring(0, 5);
 
                     LocalDate date = LocalDate.parse(showtimeDate);
@@ -392,11 +381,10 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
         }
-
         return movieShowtime;
     }
+    // Method untuk menambahkan kursi yang dipilih ke dalam tabel Seats
     public static void insertSeat(int filmId, int showtimeId, String seatName) {
         double seatPrice = 30000.0;
 
@@ -417,9 +405,9 @@ public class DatabaseManager {
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            // Handle SQL errors
         }
     }
+    // Method untuk mengambil kursi yang telah dibooking
     public static List<String> getBookedSeats(int filmId, int showtimeId) {
         List<String> bookedSeats = new ArrayList<>();
 
@@ -437,10 +425,10 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
         }
         return bookedSeats;
     }
+    // Method untuk mengambil kursi yang dipilih user
     public static List<String> getSelectedSeats(int filmId, int showtimeId, int selectedSeatsCounter) {
         List<String> selectedSeats = new ArrayList<>();
 
@@ -463,11 +451,11 @@ public class DatabaseManager {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
         }
 
         return selectedSeats;
     }
+    // Menghitung harga total kursi
     public static double getTotalSeatPrice(int filmId, int showtimeId, List<String> selectedSeats) {
         double totalSeatPrice = 0.0;
 
@@ -494,7 +482,6 @@ public class DatabaseManager {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
         }
         return totalSeatPrice;
     }
@@ -513,7 +500,7 @@ public class DatabaseManager {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 LocalDate showtimeDate = resultSet.getDate("showtime_date").toLocalDate();
-                // Format the date to the desired pattern "Friday, 15 December 2023"
+                // Format tanggal dibuat sedemikian rupa "Hari, tanggal bulan tahun"
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy");
                 showtimeDateFormatted = showtimeDate.format(formatter);
             }
@@ -522,7 +509,6 @@ public class DatabaseManager {
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
         }
 
         return showtimeDateFormatted;
@@ -530,7 +516,7 @@ public class DatabaseManager {
     public static void insertTicket(int userId, int filmId, int showtimeId, List<String> selectedSeats, double totalPrice) {
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             for (String seatName : selectedSeats) {
-                int seatId = getSeatId(filmId, showtimeId, seatName); // Retrieve seat_id from Seats table
+                int seatId = getSeatId(filmId, showtimeId, seatName); // Mengambil seat_id dari tabel Seats dari database
                 String query = "INSERT INTO Tickets (user_id, film_id, showtime_id, seat_id, price) VALUES (?, ?, ?, ?, ?)";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, userId);
@@ -544,7 +530,6 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
         }
     }
     private static int getSeatId(int filmId, int showtimeId, String seatName) {
@@ -566,7 +551,6 @@ public class DatabaseManager {
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
             System.err.println("Error executing SQL query: " + e.getMessage());
         }
 
@@ -596,7 +580,7 @@ public class DatabaseManager {
     }
 
     public static int getUserId(String username) {
-        int userId = -1; // Default value if no matching user_id is found
+        int userId = -1; // Nilai default jika userId tidak ditemukan
 
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             String query = "SELECT user_id FROM Users WHERE username = ?";
@@ -634,7 +618,6 @@ public class DatabaseManager {
             return resultSet;
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle SQL errors
             return null;
         }
     }
