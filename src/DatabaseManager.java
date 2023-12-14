@@ -285,7 +285,7 @@ public class DatabaseManager {
         }
     }
     public static void setSelectedMovieDetails(SelectedMovieDetails movieDetails) {
-        // Store the selected movie details for access by other classes
+        // Menyimpan film yang dipilih agar bisa diakses oleh kelas lain
         selectedMovieDetails = movieDetails;
     }
     public static SelectedMovieDetails getSelectedMovieDetails() {
