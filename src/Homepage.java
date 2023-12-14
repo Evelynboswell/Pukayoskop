@@ -70,13 +70,11 @@ public class Homepage extends JFrame {
                 Bookings test = new Bookings();
                 test.setVisible(true);
             }
-
             @Override
             public void mouseEntered(MouseEvent e) {
                 ticketImageLabel.setIcon(alternateTicketIcon); // Mengganti image ketika kursor mouse di atas label
                 ticketImageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Ganti kursor mouse menjadi 'hand cursor'
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 ticketImageLabel.setIcon(originalTicketIcon); // Kembali ke gamabar original
@@ -91,13 +89,11 @@ public class Homepage extends JFrame {
                 Bookings test = new Bookings();
                 test.setVisible(true);
             }
-
             @Override
             public void mouseEntered(MouseEvent e) {
                 ticketLabel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Ganti kursor menjadi 'hand cursor'
                 ticketLabel.setForeground(Color.CYAN);
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 ticketLabel.setForeground(Color.white);
