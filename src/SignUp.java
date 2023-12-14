@@ -5,6 +5,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 public class SignUp extends JFrame {
     private static final int FRAME_WIDTH = 512;
     private static final int FRAME_HEIGHT = 384;
@@ -54,8 +55,8 @@ public class SignUp extends JFrame {
         backButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Create an instance of SignIn when back button is clicked
-                dispose(); // Close the current sign-up window
+                // Menutup window SignUp dan menampilkan window SignIn ketika 'back button' diklik 
+                dispose();
                 SignIn signIn = new SignIn();
                 signIn.setVisible(true);
             }
@@ -97,7 +98,7 @@ public class SignUp extends JFrame {
         passLabel.setForeground(colorText);
         passLabel.setBounds(130, 210, 100, 16);
 
-        // TextFields
+        // TextField
         namaTF = new JTextField();
         namaTF.setBackground(Color.white);
         namaTF.setBounds(130, 90, 250, 25);
@@ -145,13 +146,13 @@ public class SignUp extends JFrame {
         contentPane.add(passTF);
         contentPane.add(signUpButton);
 
-        // Set default border for text fields
+        // Memberikan border tipe default untuk text field 
         namaTF.setBorder(defaultBorder);
         noHpTF.setBorder(defaultBorder);
         userTF.setBorder(defaultBorder);
         passTF.setBorder(defaultBorder);
 
-        // Change border color when mouse hovers over text fields
+        // Mengganti warna border ketika mouse berada di atas text field
         MouseAdapter borderMouseAdapter = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -173,7 +174,7 @@ public class SignUp extends JFrame {
         userTF.addMouseListener(borderMouseAdapter);
         passTF.addMouseListener(borderMouseAdapter);
 
-        // Change border color when text fields are focused or lose focus
+        // Mengganti warna border ketika text field sedang atau tidak difokuskan
         FocusAdapter borderFocusAdapter = new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
